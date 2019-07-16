@@ -9,7 +9,8 @@ class App extends Component {
     startNewParam: false,
     shouldResolve: false,
     shouldReset: false,
-    clearText: "AC"
+    clearText: "AC",
+    currentParam: 0
   };
 
   handleNumberClick = e => {
@@ -42,8 +43,7 @@ class App extends Component {
     const { output } = this.state;
     this.setState({
       workingArray: [output, e.target.id],
-      startNewParam: true,
-      output: "0"
+      startNewParam: true
     });
   };
 
@@ -57,7 +57,7 @@ class App extends Component {
   }
 
   equals = e => {
-    const { output, workingArray } = this.state;
+    const { output, workingArray, currentParam } = this.state;
     const operater = workingArray[1];
     const param1 = parseFloat(workingArray[0]);
     const param2 = parseFloat(output);
@@ -90,7 +90,8 @@ class App extends Component {
     this.setState({
       output: result,
       workingArray: newArray,
-      shouldReset: true
+      shouldReset: true,
+      currentParam: currentParam + 1
     });
   };
 
