@@ -9,12 +9,11 @@ class App extends Component {
     startNewParam: false,
     shouldResolve: false,
     shouldReset: false,
-    clearText: "AC",
-    currentParam: 0
+    clearText: "AC"
   };
 
   handleNumberClick = e => {
-    const { output, startNewParam, shouldReset } = this.state;
+    const { output, startNewParam, shouldReset, workingArray } = this.state;
     if (shouldReset) {
       return this.setState({
         output: this.formatOutput(e.target.id),
@@ -30,7 +29,8 @@ class App extends Component {
         output: this.formatOutput(e.target.id),
         startNewParam: false,
         shouldResolve: true,
-        clearText: "C"
+        clearText: "C",
+        workingArray: workingArray[2] ? [output, workingArray[1]] : workingArray
       });
     } else {
       let newState = output + e.target.id;
@@ -40,11 +40,21 @@ class App extends Component {
   };
 
   handleOperatorClick = e => {
-    const { output } = this.state;
-    this.setState({
-      workingArray: [output, e.target.id],
-      startNewParam: true
-    });
+    const { output, shouldResolve, workingArray } = this.state;
+    if (shouldResolve) {
+      this.setState({
+        // shouldResolve: false,
+        startNewParam: true,
+        shouldReset: false
+      });
+      this.equals(e.target.id);
+    } else {
+      this.setState({
+        workingArray: [output, e.target.id],
+        startNewParam: true,
+        shouldReset: false
+      });
+    }
   };
 
   formatOutput(str) {
@@ -56,8 +66,8 @@ class App extends Component {
     }
   }
 
-  equals = e => {
-    const { output, workingArray, currentParam } = this.state;
+  equals = newOperator => {
+    const { output, workingArray } = this.state;
     const operater = workingArray[1];
     const param1 = parseFloat(workingArray[0]);
     const param2 = parseFloat(output);
@@ -82,16 +92,16 @@ class App extends Component {
         break;
     }
     let newArray;
+    const op = newOperator || operater;
     if (param3) {
-      newArray = [result, operater, param3];
+      newArray = [result, op, param3];
     } else {
-      newArray = [...workingArray, output];
+      newArray = [workingArray[0], op, output];
     }
     this.setState({
       output: result,
       workingArray: newArray,
-      shouldReset: true,
-      currentParam: currentParam + 1
+      shouldReset: !newOperator
     });
   };
 
@@ -108,7 +118,8 @@ class App extends Component {
         startNewParam: false,
         shouldResolve: false,
         shouldReset: false,
-        clearText: "AC"
+        clearText: "AC",
+        currentParam: 0
       });
     } else {
       this.clearLast();
